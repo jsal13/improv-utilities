@@ -22,10 +22,10 @@ class DirectoryConverter:
                 .get("creation_time")
             )
             created_dt = created_dt.replace(":", "")
-        except:  # This is for testing.
-            created_dt = "111222333"
+        except ffmpeg.Error as exc:
+            raise exc
 
-        file_ext = input_path.suffix
+        file_ext = PurePath(input_path).suffix
 
         output_path = self.input_dir.joinpath("converted")
         Path(output_path).mkdir(parents=True, exist_ok=True)
@@ -36,7 +36,7 @@ class DirectoryConverter:
         return new_file_path
 
     def convert_file(self, input_path: str) -> None:
-        """Convert ``input_path`` to video at ``output_path``."""
+        """Convert file at ``input_path``."""
         output_path = self._create_file_output_name(input_path=input_path)
 
         # cmd_str = f"""

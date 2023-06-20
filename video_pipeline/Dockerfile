@@ -11,4 +11,4 @@ COPY converter.py .
 
 RUN mkdir -p /videos
 
-CMD [ "python", "converter.py" "/videos" ]
+CMD ["python", "converter.py", "/videos"]
