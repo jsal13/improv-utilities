@@ -2,10 +2,7 @@
 
 This repository will store any ops code, helper code, or other items related to working with the _Industry Darlings_.
 
-## Table of contents
-
 - [Industry Darlings](#industry-darlings)
-  - [Table of contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Contributing](#contributing)
 
