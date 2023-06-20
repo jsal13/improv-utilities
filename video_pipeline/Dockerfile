@@ -1,8 +1,14 @@
-FROM python:3.10-buster
+FROM python:3.10.12-alpine3.18
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apk add 
+
+# RUN apt-get update && apt-get install --no-install-recommends -y \
+#     ffmpeg \
+#     && rm -rf /var/lib/apt/lists/*
+
+RUN apk add --no-cache ffmpeg
 
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
