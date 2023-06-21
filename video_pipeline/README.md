@@ -4,12 +4,23 @@ This folder deals with the pipeline for videos: converting, uploading, etc.
 
 - [Video Pipeline](#video-pipeline)
   - [Quickstart](#quickstart)
-  - [Contributing](#contributing)
 
 ## Quickstart
 
-To do.
+To Convert a directory of movies:
 
-## Contributing
+```bash
+# With Python:
+python instagram_video_conversion/converter.py /path/to/the/mp4s/
 
-To contribute, please create an Issue detailing the problem and a potential solution you have in mind; we'll triage from there!
+# With `just` from the repo root:
+just convert-movie-dir /path/to/the/mp4s/
+```
+
+MP4 Container format
+H.264 Video Codec
+AAC Audio
+3500kbps bitrate
+30 FPS
+60 seconds maximum in length
+1080p 16:9 max (vertical or horizontal)

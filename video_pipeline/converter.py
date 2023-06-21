@@ -1,5 +1,6 @@
 import glob
 import sys
+from datetime import datetime
 from pathlib import Path, PurePath
 
 import ffmpeg
@@ -22,6 +23,8 @@ class DirectoryConverter:
                 .get("creation_time")
             )
             created_dt = created_dt.replace(":", "")
+        except AttributeError:
+            created_dt = datetime.now().isoformat()
         except ffmpeg.Error as exc:
             raise exc
 
@@ -62,7 +65,7 @@ class DirectoryConverter:
 
     def convert_all(self) -> None:
         """Call ``convert_file`` on all files in the input path."""
-        for input_path in glob.glob(f"{self.input_dir}/*.txt"):
+        for input_path in glob.glob(f"{self.input_dir}/*.mp4"):
             self.convert_file(input_path=input_path)
 
 

@@ -2,7 +2,7 @@ FROM python:3.10.12-alpine3.18
 
 WORKDIR /app
 
-RUN apk add 
+# RUN apk add 
 
 # RUN apt-get update && apt-get install --no-install-recommends -y \
 #     ffmpeg \
