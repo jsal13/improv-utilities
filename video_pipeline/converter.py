@@ -54,7 +54,6 @@ class Converter:
             - See: https://github.com/kkroening/ffmpeg-python/issues/514
         - ``scale`` in the video filter takes -2 ("keep aspect ratio")
           and 720 (for 720p).
-        -
         """
         _input_path = Path(input_path).absolute()
         print(f"* Converting: {_input_path}")
@@ -74,7 +73,7 @@ class Converter:
             vcodec="libx264",
             acodec="aac",
             r=29.93,  # Framerate
-            crf=23,  # Constant Rate Factor
+            crf=22,  # Constant Rate Factor
         ).run_async(pipe_stdout=True, pipe_stderr=True)
 
         if logging:
