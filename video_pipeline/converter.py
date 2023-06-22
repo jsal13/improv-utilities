@@ -1,19 +1,15 @@
 import glob
-import sys
 from datetime import datetime
 from pathlib import Path, PurePath
 
 import ffmpeg
 
 
-class DirectoryConverter:
+class Converter:
     """Convert all videos in a particular directory."""
 
-    def __init__(self, input_dir: str):
-        """Convert input video to instagram-supported video."""
-        self.input_dir = PurePath(input_dir)
-
-    def _create_file_output_name(self, input_path: str) -> PurePath:
+    @staticmethod
+    def _create_output_name(input_path: Path) -> PurePath:
         """Create a new file with a standard output name."""
         try:
             created_dt = (
@@ -29,8 +25,9 @@ class DirectoryConverter:
             raise exc
 
         file_ext = PurePath(input_path).suffix
+        output_dir = PurePath(input_path).parent
 
-        output_path = self.input_dir.joinpath("converted")
+        output_path = output_dir.joinpath("converted")
         Path(output_path).mkdir(parents=True, exist_ok=True)
 
         new_file_name = f"ACT_LOCATION_{created_dt}{file_ext}"
@@ -38,37 +35,59 @@ class DirectoryConverter:
 
         return new_file_path
 
-    def convert_file(self, input_path: str) -> None:
-        """Convert file at ``input_path``."""
-        output_path = self._create_file_output_name(input_path=input_path)
+    @staticmethod
+    def convert_file(input_path: str, logging=False) -> None:
+        """
+        Convert video at ``input_path``.
 
-        # cmd_str = f"""
-        #     ffmpeg
-        #     -i {self.input_path}
-        #     -vf scale=-2:720
-        #     -c:v libx264
-        #     -profile:v main
-        #     -level:v 3.0
-        #     -x264-params scenecut=0:open_gop=0:min-keyint=72:keyint=72
-        #     -c:a aac
-        #     -preset slow
-        #     -crf 23
-        #     -r 29.93
-        #     -sn
-        #     -f mp4
-        #     {self.output_path}
-        # """
-        # cmd = shlex.split(cmd_str)
-        # subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        Notes
+        -----
+        - ``sn`` refers to Subtitles being ignored or not.
+            - See: https://github.com/kkroening/ffmpeg-python/issues/514
+        - ``scale`` in the video filter takes -2 ("keep aspect ratio")
+          and 720 (for 720p).
+        -
+        """
+        _input_path = Path(input_path).absolute()
+        print(f"* Converting: {_input_path}")
+
+        output_path = Converter._create_output_name(input_path=_input_path)
+
+        # The conversion
+        input_stream = ffmpeg.input(_input_path, sn=None)
+        vid = input_stream.video.filter("scale", -2, 720)
+        aud = input_stream.audio
+        output = ffmpeg.output(
+            vid,
+            aud,
+            filename=output_path,
+            format="mp4",
+            preset="slower",
+            vcodec="libx264",
+            acodec="aac",
+            r=29.93,  # Framerate
+            crf=23,  # Constant Rate Factor
+        ).run_async(pipe_stdout=True, pipe_stderr=True)
+
+        if logging:
+            out, err = output.communicate()
+            output_dir = PurePath(input_path).parent
+            with open(output_dir, "w+", encoding="utf-8") as elog:
+                elog.write(err.decode("utf-8"))
+                elog.write(out.decode("utf-8"))
 
         print(f"* Converted file at: {output_path}")
 
-    def convert_all(self) -> None:
+    @staticmethod
+    def convert_all(input_path: str, logging=False) -> None:
         """Call ``convert_file`` on all files in the input path."""
-        for input_path in glob.glob(f"{self.input_dir}/*.mp4"):
-            self.convert_file(input_path=input_path)
+        _input_path = Path(input_path).absolute()
+
+        for movie_path in glob.glob(f"{_input_path}/*.mp4"):
+            Converter.convert_file(input_path=movie_path, logging=logging)
 
 
 if __name__ == "__main__":
-    conv = DirectoryConverter(input_dir=sys.argv[1])
-    conv.convert_all()
+    import sys
+
+    Converter.convert_file(input_path=sys.argv[1])
