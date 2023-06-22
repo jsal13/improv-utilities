@@ -16,3 +16,7 @@ python instagram_video_conversion/converter.py /path/to/the/mp4s/
 # With `just` from the repo root:
 just convert-movie-dir /path/to/the/mp4s/
 ```
+
+## TODO:
+
+- Docker for individual things.  That way we _parallelize_.
