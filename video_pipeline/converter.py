@@ -18,11 +18,19 @@ class Converter:
                 .get("tags")
                 .get("creation_time")
             )
-            created_dt = created_dt.replace(":", "")
         except AttributeError:
-            created_dt = datetime.now().isoformat()
+            pass
         except ffmpeg.Error as exc:
             raise exc
+
+        # TODO: Refactor this, you dingdong.
+        if not created_dt:
+            created_dt = datetime.now().isoformat()
+
+        # TODO: Format this nicely.  Maybe do this with strftime.
+        created_dt = created_dt.split(".")[0]
+        created_dt = created_dt.replace(":", "")
+        created_dt = created_dt.replace("T", "_")
 
         file_ext = PurePath(input_path).suffix
         output_dir = PurePath(input_path).parent
@@ -71,8 +79,10 @@ class Converter:
 
         if logging:
             out, err = output.communicate()
-            output_dir = PurePath(input_path).parent
-            with open(output_dir, "w+", encoding="utf-8") as elog:
+            output_dir = PurePath(_input_path).parent
+            with open(
+                output_dir.joinpath("output.log"), "w+", encoding="utf-8"
+            ) as elog:
                 elog.write(err.decode("utf-8"))
                 elog.write(out.decode("utf-8"))
 
@@ -90,4 +100,4 @@ class Converter:
 if __name__ == "__main__":
     import sys
 
-    Converter.convert_file(input_path=sys.argv[1])
+    Converter.convert_file(input_path=sys.argv[1], logging=True)
