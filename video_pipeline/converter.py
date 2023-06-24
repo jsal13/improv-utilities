@@ -116,5 +116,5 @@ class Converter:
 
 if __name__ == "__main__":
     import sys
-    
+
     Converter.convert_file(input_path=sys.argv[1], logging=True)
