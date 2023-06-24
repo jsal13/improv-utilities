@@ -9,53 +9,37 @@ class Converter:
     """Convert all videos in a particular directory."""
 
     @staticmethod
-    def _create_output_name(input_path: Path) -> PurePath:
-        """Create a new file with a standard output name."""
+    def _get_datetime_for_recording(input_path: Path) -> str:
+        """Probe metadata for creation_time."""
+        # Default to using the current datetime in isoformat.
+        created_dt = datetime.now()
         try:
-            created_dt = (
+            probe_creation_time = (
                 ffmpeg.probe(input_path)
                 .get("streams")[0]
                 .get("tags")
                 .get("creation_time")
             )
+            created_dt = datetime.strptime(probe_creation_time, "%Y-%m-%dT%H:%M:%S.%f")
         except AttributeError:
             pass
         except ffmpeg.Error as exc:
             raise exc
 
-        ''' 
-        NOTE : "if not created_dt:" Will throw an error if created_dt does not exist.
-        Two fixes can be done for this, The first is checking whether the vairable exists in the local scope : 
-        
-        if not 'created_dt' in locals():
-            # commands
+        return created_dt.strftime("%Y-%m-%d_%H%M%S")
 
-        The Second is by using a try-except block : 
+    @staticmethod
+    def _create_output_name(input_path: Path) -> PurePath:
+        """Create a new file with a standard output name."""
+        created_dt = Converter._get_datetime_for_recording(input_path=input_path)
 
-        try:
-            if created_dt:
-                pass
-        except NameError:
-            # commands
-        
-        I chose the first as it looks better in my opinion
-        '''
-        if not 'created_dt' in locals():
-            created_dt = datetime.now().isoformat()
-
-        # NOTE : Per request of the original TODO note, replaced code to format the datetime using strftime
-        # Parse the original datetime string
-        original_format = datetime.strptime(created_dt, '%Y-%m-%dT%H:%M:%S.%f')
-
-        # Update the datetime format
-        created_dt = original_format.strftime('%Y-%m-%d_%H%M%S')
-
-        file_ext = PurePath(input_path).suffix
+        # Create new output dir if it does not exist.
         output_dir = PurePath(input_path).parent
-
         output_path = output_dir.joinpath("converted")
         Path(output_path).mkdir(parents=True, exist_ok=True)
 
+        # Create new filename and place it in the output path.
+        file_ext = PurePath(input_path).suffix
         new_file_name = f"ACT_LOCATION_{created_dt}{file_ext}"
         new_file_path = output_path.joinpath(new_file_name)
 
