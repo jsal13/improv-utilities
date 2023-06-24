@@ -23,7 +23,7 @@ function ParseXML(xml) {
             var newRow = tableNode.insertRow(-1);
             fileLink = `${BUCKET_URL}/${itemKey}`
 
-            newRow.innerHTML = `<td><a href=${fileLink}>${itemKey}</a></td><td class='file-size'>${itemSizeInGigs}</td>`
+            newRow.innerHTML = `<td scope="row"><a href=${fileLink}>${itemKey}</a></td><td class='file-size text-end'>${itemSizeInGigs}</td>`
         }
     })
 }
