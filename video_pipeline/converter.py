@@ -23,14 +23,32 @@ class Converter:
         except ffmpeg.Error as exc:
             raise exc
 
-        # TODO: Refactor this, you dingdong.
-        if not created_dt:
+        ''' 
+        NOTE : "if not created_dt:" Will throw an error if created_dt does not exist.
+        Two fixes can be done for this, The first is checking whether the vairable exists in the local scope : 
+        
+        if not 'created_dt' in locals():
+            # commands
+
+        The Second is by using a try-except block : 
+
+        try:
+            if created_dt:
+                pass
+        except NameError:
+            # commands
+        
+        I chose the first as it looks better in my opinion
+        '''
+        if not 'created_dt' in locals():
             created_dt = datetime.now().isoformat()
 
-        # TODO: Format this nicely.  Maybe do this with strftime.
-        created_dt = created_dt.split(".")[0]
-        created_dt = created_dt.replace(":", "")
-        created_dt = created_dt.replace("T", "_")
+        # NOTE : Per request of the original TODO note, replaced code to format the datetime using strftime
+        # Parse the original datetime string
+        original_format = datetime.strptime(created_dt, '%Y-%m-%dT%H:%M:%S.%f')
+
+        # Update the datetime format
+        created_dt = original_format.strftime('%Y-%m-%d_%H%M%S')
 
         file_ext = PurePath(input_path).suffix
         output_dir = PurePath(input_path).parent
@@ -98,5 +116,5 @@ class Converter:
 
 if __name__ == "__main__":
     import sys
-
+    
     Converter.convert_file(input_path=sys.argv[1], logging=True)
