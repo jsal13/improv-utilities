@@ -20,8 +20,10 @@ class Converter:
                 .get("tags")
                 .get("creation_time")
             )
-            created_dt = datetime.strptime(probe_creation_time, "%Y-%m-%dT%H:%M:%S.%f")
+            created_dt = datetime.strptime(probe_creation_time, "%Y-%m-%dT%H:%M:%S.%fZ")
         except AttributeError:
+            pass
+        except TypeError:
             pass
         except ffmpeg.Error as exc:
             raise exc
