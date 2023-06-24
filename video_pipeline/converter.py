@@ -9,35 +9,39 @@ class Converter:
     """Convert all videos in a particular directory."""
 
     @staticmethod
-    def _create_output_name(input_path: Path) -> PurePath:
-        """Create a new file with a standard output name."""
+    def _get_datetime_for_recording(input_path: Path) -> str:
+        """Probe metadata for creation_time."""
+        # Default to using the current datetime in isoformat.
+        created_dt = datetime.now()
         try:
-            created_dt = (
+            probe_creation_time = (
                 ffmpeg.probe(input_path)
                 .get("streams")[0]
                 .get("tags")
                 .get("creation_time")
             )
+            created_dt = datetime.strptime(probe_creation_time, "%Y-%m-%dT%H:%M:%S.%fZ")
         except AttributeError:
+            pass
+        except TypeError:
             pass
         except ffmpeg.Error as exc:
             raise exc
 
-        # TODO: Refactor this, you dingdong.
-        if not created_dt:
-            created_dt = datetime.now().isoformat()
+        return created_dt.strftime("%Y-%m-%d_%H%M%S")
 
-        # TODO: Format this nicely.  Maybe do this with strftime.
-        created_dt = created_dt.split(".")[0]
-        created_dt = created_dt.replace(":", "")
-        created_dt = created_dt.replace("T", "_")
+    @staticmethod
+    def _create_output_name(input_path: Path) -> PurePath:
+        """Create a new file with a standard output name."""
+        created_dt = Converter._get_datetime_for_recording(input_path=input_path)
 
-        file_ext = PurePath(input_path).suffix
+        # Create new output dir if it does not exist.
         output_dir = PurePath(input_path).parent
-
         output_path = output_dir.joinpath("converted")
         Path(output_path).mkdir(parents=True, exist_ok=True)
 
+        # Create new filename and place it in the output path.
+        file_ext = PurePath(input_path).suffix
         new_file_name = f"ACT_LOCATION_{created_dt}{file_ext}"
         new_file_path = output_path.joinpath(new_file_name)
 
