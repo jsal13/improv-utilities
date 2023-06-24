@@ -16,14 +16,14 @@ function ParseXML(xml) {
     contents.forEach(item => {
         var itemKey = item.getElementsByTagName("Key")[0].innerHTML
         var itemSize = item.getElementsByTagName("Size")[0].innerHTML
-        var itemSizeInGigs = Math.round(itemSize / (1024 ** 2))
+        var itemSizeInMB = (10 * Math.round(itemSize / (1024 ** 2)) / 10)
 
 
         if (!(itemKey.endsWith("/") || itemKey == "error.html" || itemKey == "index.html" || itemKey == "script.js")) {
             var newRow = tableNode.insertRow(-1);
             fileLink = `${BUCKET_URL}/${itemKey}`
 
-            newRow.innerHTML = `<td scope="row"><a href=${fileLink}>${itemKey}</a></td><td class='file-size text-end'>${itemSizeInGigs}</td>`
+            newRow.innerHTML = `<td scope="row"><a href=${fileLink}>${itemKey}</a></td><td class='file-size text-end'>${itemSizeInMB}M</td>`
         }
     })
 }
