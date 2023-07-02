@@ -9,7 +9,7 @@ class Converter:
     """Convert all videos in a particular directory."""
 
     @staticmethod
-    def _get_datetime_for_recording(input_path: Path) -> str:
+    def _get_dt_for_recording(input_path: Path) -> str:
         """Probe metadata for creation_time."""
         # Default to using the current datetime in isoformat.
         created_dt = datetime.now()
@@ -20,7 +20,8 @@ class Converter:
                 .get("tags")
                 .get("creation_time")
             )
-            created_dt = datetime.strptime(probe_creation_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+            dt_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+            created_dt = datetime.strptime(probe_creation_time, dt_format)
         except AttributeError:
             pass
         except TypeError:
@@ -33,7 +34,7 @@ class Converter:
     @staticmethod
     def _create_output_name(input_path: Path) -> PurePath:
         """Create a new file with a standard output name."""
-        created_dt = Converter._get_datetime_for_recording(input_path=input_path)
+        created_dt = Converter._get_dt_for_recording(input_path=input_path)
 
         # Create new output dir if it does not exist.
         output_dir = PurePath(input_path).parent
@@ -64,6 +65,8 @@ class Converter:
 
         output_path = Converter._create_output_name(input_path=_input_path)
 
+        start_time = datetime.now()
+
         # The conversion
         input_stream = ffmpeg.input(_input_path, sn=None)
         vid = input_stream.video.filter("scale", -2, 720)
@@ -90,6 +93,10 @@ class Converter:
                 elog.write(out.decode("utf-8"))
 
         print(f"* Converted file at: {output_path}")
+
+        total_conv_time_secs = (datetime.now() - start_time).total_seconds()
+        total_conv_time_mins = round(10 * (total_conv_time_secs / 60)) / 10
+        print(f"* Total conversion time: {total_conv_time_mins} minutes.")
 
     @staticmethod
     def convert_all(input_path: str, logging=False) -> None:
