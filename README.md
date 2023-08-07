@@ -1,16 +1,20 @@
-# Industry Darlings
+# Improv Utilities
 
-This repository will store any ops code, helper code, or other items related to working with the _Industry Darlings_.
+This repository will store any ops code, helper code, or other items related to working with the _Improv Utilities_.
 
-- [Industry Darlings](#industry-darlings)
+- [Improv Utilities](#improv-utilities)
   - [Introduction](#introduction)
   - [Contributing](#contributing)
 
 ## Introduction
 
-This repository will store any ops code, helper code, or other items related to working with the _Industry Darlings_.
+This repository will store any ops code, helper code, or other items related to working tech with improv people.
 
 More specific instructions will be found in relevant folders.
+
+## Quickstart
+
+Use `just` to see the possible commands to run.
 
 ## S3 Bucket
 

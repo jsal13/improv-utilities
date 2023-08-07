@@ -6,7 +6,7 @@ import ffmpeg
 
 
 class Converter:
-    """Convert all videos in a particular directory."""
+    """Convert videos in a particular directory."""
 
     @staticmethod
     def _get_dt_for_recording(input_path: Path) -> str:

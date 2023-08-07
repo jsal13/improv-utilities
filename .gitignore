@@ -1,10 +1,7 @@
-# Any movie files that might accidentally get committed.
-*.mp4
-*.mov
-*.m4v
-*.avi
-*.mkv
-*.webm
+.ruff_cache/
+.venv/
+.vscode/
+poetry.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
