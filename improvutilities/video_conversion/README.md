@@ -11,8 +11,8 @@ To Convert a directory of movies:
 
 ```bash
 # With Python:
-python instagram_video_conversion/converter.py /path/to/the/mp4s/
+python ./converter.py /path/to/the/mp4/example.mp4
 
-# With `just` from the repo root:
+# With `just` from the repo root using a docker image:
 just convert-video /path/to/the/mp4s/example.mp4
 ```
