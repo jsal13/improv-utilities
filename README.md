@@ -12,13 +12,24 @@ This repository will store any ops code, helper code, or other items related to 
 
 More specific instructions will be found in relevant folders.
 
+## Requirements
+
+- [Docker](https://www.docker.com/)
+- [Just](https://www.docker.com/) (Optional)
+
 ## Quickstart
 
 Use `just` to see the possible commands to run.
 
-## S3 Bucket
+### Video Converting
 
-The main bucket for videos will be at `https://s3.console.aws.amazon.com/s3/buckets/james-salvatore-videography`.  Message `james.c.salvatore.services at gmail.com` for more information on this or access to it.
+The given video conversion is great at taking the (very large) movies from a phone and shrinking the file size while preserving quality.  The way to convert a video is:
+
+```bash
+just convert-video /path/to/movie.mp3
+```
+
+This will create a converted video in a `converted` folder in the same place as the original file.
 
 ## Contributing
 
